@@ -1,0 +1,78 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>添加产品</title>
+    <meta charset="UTF-8" />
+    <!-- import CSS -->
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"
+          rel="stylesheet" />
+</head>
+<body style="margin: 0;">
+    <el-container id="app">
+        <el-main>
+            <el-row>
+                <el-col style="padding:10px;">
+                    <el-button type="primary"
+                               v-on:click="onAddButtonClick">
+                        新增
+                    </el-button>
+                </el-col>
+                <el-col :span="8"
+                        style="padding: 10px;"
+                        v-for="product in products">
+                    <el-card>
+                        <div slot="header">
+                            <span>{{product.productName}}</span>
+                        </div>
+                        <ul>产品序号：{{product.productNumber}}</ul>
+                        <ul>产品类型：{{product.productType}}</ul>
+                        <ul>产品价格：{{product.price}}</ul>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </el-main>
+    </el-container>
+    <!-- import Vue before Element -->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- import JavaScript -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.js"></script>
+    <script>
+        const app = new Vue({
+            el: "#app",
+            data: {
+                // 获取到的所有产品数据放在这里（用于界面元素的绑定）
+                products: []
+            },
+            methods: {
+                async GetAllProducts() {
+                    // 获取所有产品数据
+                    let response = await axios.get('/Product/GetAll');
+
+                    if (response.data.code === 'success') {
+                        this.products = response.data.data;
+                    } else {
+                        this.$message({
+                            message: '记录获取失败',
+                            type: 'error'
+                        });
+                    }
+                }
+            },
+            onAddButtonClick() {
+                window.location.href = "/Product/Create";
+            }
+        },
+            mounted() {
+                this.GetAllProducts();
+            }
+        });
+    </script>
+</body>
+
+</html>
